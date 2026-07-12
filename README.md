@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **DISCLAIMER & LIABILITY NOTICE**: This is a **personal, individual project** created and maintained entirely by the author (Prashanth). It is **not** an official Google product, it is **not** affiliated with or supported by Google Cloud or Google LLC, and it does **not** come with any official support or warranty. By using this software, you acknowledge that you are solely liable for its use.
+
 # 🎙️ Extract Human Voice Skill
 
 [![npx skills](https://img.shields.io/badge/skills.sh-installed-brightgreen)](https://skills.sh)
