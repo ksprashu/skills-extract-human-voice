@@ -1,69 +1,65 @@
 > [!IMPORTANT]
 > **DISCLAIMER & LIABILITY NOTICE**: This is a **personal, individual project** created and maintained entirely by the author (Prashanth). It is **not** an official Google product, it is **not** affiliated with or supported by Google Cloud or Google LLC, and it does **not** come with any official support or warranty. By using this software, you acknowledge that you are solely liable for its use.
 
-# 🎙️ Extract Human Voice Skill
+# 🎙️ Extract Human Voice
 
 [![npx skills](https://img.shields.io/badge/skills.sh-installed-brightgreen)](https://skills.sh)
 
-Automatically extracts the human voice and writing tone from various AI coding tools like Antigravity, Gemini CLI, Claude Code, Cline, Roo Code, Aider, and Cursor. Use this skill when you need to analyze, compile, and package a user's conversational style and engineering constraints into canonical reference files.
+![Extract Human Voice Header](./docs/images/header.png)
+
+An advanced, high-fidelity custom skill and script pipeline engineered to automatically extract, parse, and structure a developer's unique voice and writing tone from major AI coding systems (Antigravity, Gemini CLI, Claude Code, Cline, Roo Code, Aider, and Cursor).
+
+This skill scans local conversation databases and logs, programmatically scrubs PII and hardcoded credentials, and structures your unique conversational styles, linguistic heuristics, and engineering preferences into canonical, copybara-compatible markdown profiles.
 
 ---
 
-## 🚀 Overview
+## 🔄 Voice Extraction & Persona Synthesis Pipeline
 
-This skill provides an automated pipeline for scanning conversation history logs and databases from all major AI developer tools on your system, scrubbing any sensitive metadata or PII, analyzing linguistic style markers, and generating a standard Copybara-compatible writing persona profile.
+The skill executes a structured extraction flow to translate raw SQLite log records into highly-refined, PII-free style guidelines:
 
-### Key Features
-* **Multi-Tool Support**: Scan and extract style parameters from Antigravity, Gemini CLI, Claude Code, Cline, Roo Code, Aider, and Cursor.
-* **PII & Secret Scrubbing**: Automatically redacts API keys, credentials, email addresses, personal domains, and usernames.
-* **Persona Generation**: Creates standardized markdown profiles suitable for custom agents or copy-writer tools.
-
----
-
-## 📦 Installation
-
-Install this skill into your local agent environment using `npx skills`:
-
-```bash
-npx skills add ksprashu/skills-extract-human-voice
+```mermaid
+flowchart TD
+    Scan[1. Scan Local Logs & DBs<br>Antigravity, Gemini, Claude, Cursor, Aider] --> Scrub[2. scrub_pii() Filters<br>Keys, Secrets, Emails, Domains]
+    Scrub --> Analyze[3. Analyze Linguistic Style<br>Lexicons, Structural Heuristics, Sentence Lengths]
+    Analyze --> Package[4. Package Canonical Outputs<br>voice_and_tone.md Golden Rules]
+    Package --> Template[5. Synthesize custom SKILL.md<br>Copybara Writing Assistant Profiles]
+    
+    classDef steps fill:#0e101f,stroke:#00b0ff,stroke-width:2px,color:#fff;
+    class Scan,Scrub,Analyze,Package,Template steps;
 ```
-
----
-
-## 🛠️ Usage
-
-To extract your voice profile, execute the automated Python script included in this repository:
-
-```bash
-python3 scripts/extract_voice.py
-```
-
-### Outputs
-
-The script walks through your system's logs, analyzes linguistic style markers, and outputs three packaged canonical files under the `output/` directory:
-
-1. **`voice_and_tone.md`**: Your core style guidelines, sentence structures, and linguistic heuristics.
-2. **`golden_examples.md`**: Sample high-bar engineering instructions collected from your history.
-3. **`SKILL.md`**: Standard frontmatter metadata template ready to be deployed as a writing assistant.
 
 ---
 
 ## 📂 Repository Structure
 
-```text
-skills-extract-human-voice/
-├── SKILL.md          # Skill entrypoint metadata and instructions
-├── README.md         # Full project and usage documentation
-├── EXAMPLES.md       # Examples of scrubbed PII and parsed outputs
-├── REFERENCE.md      # Linguistic heuristics and target database structures
-├── scripts/
-│   └── extract_voice.py  # Automated voice extraction Python pipeline
-└── output/           # (Auto-generated) Extracted markdown files
-```
+The package contents are fully organized for installation via `npx skills`:
+
+| Path | Type | Purpose |
+| :--- | :--- | :--- |
+| `skills/extract-human-voice/SKILL.md` | Core Instructions | Standard skill metadata, instruction patterns, and SQLite discovery schemas. |
+| `skills/extract-human-voice/scripts/extract_voice.py` | Python Engine | Core extraction script parsing raw databases, scrubbing secrets, and compiling metrics. |
+| `skills/extract-human-voice/REFERENCE.md` | Reference Guide | Full structural layouts and sqlite schemas for major client directories (Claude, Cursor, etc.). |
+| `skills/extract-human-voice/EXAMPLES.md` | Examples | Complete before-and-after samples demonstrating PII scrubbing precision. |
 
 ---
 
-## 🎓 Technical Details & Reference
+## 🛠️ Installation & Usage
 
-* Refer to [REFERENCE.md](REFERENCE.md) for database paths, sqlite schemas, and specific parsing rules.
-* Refer to [EXAMPLES.md](EXAMPLES.md) for before/after comparison examples of the scrubbing processor.
+Install this skill into your agent environment using `npx skills`:
+
+```bash
+npx skills add ksprashu/skills-extract-human-voice
+```
+
+### Execution Example
+
+To extract your workspace persona and generate structured style assets, execute the Python engine inside your local repository:
+
+```bash
+python3 skills/extract-human-voice/scripts/extract_voice.py
+```
+
+The script will scan client directories, apply regex scrubs, and export three canonical assets under `output/`:
+1. `voice_and_tone.md` (Your core style guidelines, sentence structures, and linguistic heuristics)
+2. `golden_examples.md` (Sample high-bar engineering instructions collected from your history)
+3. `SKILL.md` (A ready-to-deploy writing assistant skill matching your exact style)
