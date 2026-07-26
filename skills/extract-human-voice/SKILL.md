@@ -47,6 +47,10 @@ cp /Users/ksprashanth/.agents/skills/extract-human-voice/output/voice_and_tone.m
 cp /Users/ksprashanth/.agents/skills/extract-human-voice/output/golden_examples.md /Users/ksprashanth/.agents/skills/copy-writer-bara/references/
 ```
 
+### 4. Hyperlinking & Reference Grounding Pattern Extraction
+The extraction pipeline analyzes and extracts the user's hyperlinking habits, reference citation patterns, product dual-linking conventions (`[Product](landing) ([Docs](docs))`), and `knowledge-catalog` retrieval workflows, preserving them in the output `voice_and_tone.md`.
+
 ## Advanced Technical Specifications
 For list of directory paths, schema types, database structures, and linguistic heuristics, see [REFERENCE.md](REFERENCE.md).
 For processing comparisons and scrubbing examples, see [EXAMPLES.md](EXAMPLES.md).
+
