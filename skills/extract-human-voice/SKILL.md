@@ -12,10 +12,10 @@ This skill provides an automated pipeline for scanning conversation history logs
 To extract your voice profile, run the helper script in this skill folder:
 
 ```bash
-python3 /Users/ksprashanth/.agents/skills/extract-human-voice/scripts/extract_voice.py
+python3 $HOME/.agents/skills/extract-human-voice/scripts/extract_voice.py
 ```
 
-This will walk the configured storage directories, analyze user prompts, and output three packaged canonical files under `/Users/ksprashanth/.agents/skills/extract-human-voice/output/`:
+This will walk the configured storage directories, analyze user prompts, and output three packaged canonical files under `$HOME/.agents/skills/extract-human-voice/output/`:
 * `voice_and_tone.md` - Your core style and linguistic guidelines
 * `golden_examples.md` - Sample high-bar engineering instructions
 * `SKILL.md` - Frontmatter template for the writing assistant
@@ -43,8 +43,8 @@ To ensure your template is ready for public or team sharing (e.g., in a git repo
 ### 3. Packaging into copy-writer-bara
 Once the script has completed, you can move the generated files from the `output/` folder into your custom copy-writer skill (e.g., `copy-writer-bara/`):
 ```bash
-cp /Users/ksprashanth/.agents/skills/extract-human-voice/output/voice_and_tone.md /Users/ksprashanth/.agents/skills/copy-writer-bara/references/
-cp /Users/ksprashanth/.agents/skills/extract-human-voice/output/golden_examples.md /Users/ksprashanth/.agents/skills/copy-writer-bara/references/
+cp $HOME/.agents/skills/extract-human-voice/output/voice_and_tone.md $HOME/.agents/skills/copy-writer-bara/references/
+cp $HOME/.agents/skills/extract-human-voice/output/golden_examples.md $HOME/.agents/skills/copy-writer-bara/references/
 ```
 
 ### 4. Hyperlinking & Reference Grounding Pattern Extraction

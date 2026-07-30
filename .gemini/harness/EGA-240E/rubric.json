@@ -1,0 +1,24 @@
+{
+  "rubric_id": "RUBRIC-EGA-240E",
+  "short_id": "EGA-240E",
+  "criteria": [
+    {
+      "id": "completeness",
+      "name": "Requirement Completeness",
+      "description": "Does the artifact fully address all constraints specified in the user goal?",
+      "threshold": 8
+    },
+    {
+      "id": "clarity_and_structure",
+      "name": "Clarity & Structural Precision",
+      "description": "Is the content well-organized with clear headings, tables, or code blocks?",
+      "threshold": 8
+    },
+    {
+      "id": "verifiability",
+      "name": "Verifiability & Fact Grounding",
+      "description": "Are claims supported by data, logic, or explicit source references?",
+      "threshold": 8
+    }
+  ]
+}

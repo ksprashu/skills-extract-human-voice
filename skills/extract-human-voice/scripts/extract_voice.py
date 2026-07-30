@@ -18,32 +18,53 @@ import re
 import json
 import glob
 import sqlite3
+import platform
+import argparse
+import getpass
 from collections import Counter
 
 # Set up paths relative to user's home directory
 HOME = os.path.expanduser('~')
 
-# Standard storage paths for AI coding tools on macOS
-PATHS = {
-    "antigravity-cli": os.path.join(HOME, ".gemini", "antigravity-cli", "brain"),
-    "gemini-cli": os.path.join(HOME, ".gemini", "tmp"),
-    "claude-code": os.path.join(HOME, ".claude", "projects"),
-    "cline": os.path.join(HOME, "Library", "Application Support", "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "tasks"),
-    "roo-code": os.path.join(HOME, "Library", "Application Support", "Code", "User", "globalStorage", "rooveterinaryinc.roo-cline", "tasks"),
-    "aider": HOME,  # Checked for .aider.history and .aider.chat.history.md
-    "cursor": os.path.join(HOME, "Library", "Application Support", "Cursor", "User")
-}
+def get_tool_paths():
+    """Dynamically resolves AI tool storage directories across macOS, Linux, and Windows."""
+    system = platform.system()
+    if system == "Darwin":
+        app_support = os.path.join(HOME, "Library", "Application Support")
+    elif system == "Windows":
+        app_support = os.environ.get("APPDATA", os.path.join(HOME, "AppData", "Roaming"))
+    else:  # Linux / Unix
+        app_support = os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
+
+    return {
+        "antigravity-cli": os.path.join(HOME, ".gemini", "antigravity-cli", "brain"),
+        "gemini-cli": os.path.join(HOME, ".gemini", "tmp"),
+        "claude-code": os.path.join(HOME, ".claude", "projects"),
+        "cline": os.path.join(app_support, "Code", "User", "globalStorage", "saoudrizwan.claude-dev", "tasks"),
+        "roo-code": os.path.join(app_support, "Code", "User", "globalStorage", "rooveterinaryinc.roo-cline", "tasks"),
+        "aider": HOME,  # Checked for .aider.history and .aider.chat.history.md
+        "cursor": os.path.join(app_support, "Cursor", "User")
+    }
+
+# Standard storage paths for AI coding tools
+PATHS = get_tool_paths()
 
 # Regex and lists for PII / Sensitive data scrubbing
 PII_PATTERNS = [
     (r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', '<EMAIL>'),  # Email addresses
-    (r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b', '<IP_ADDRESS>'),  # IP addresses
+    (r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b', '<IP_ADDRESS>'),  # IPv4 addresses
+    (r'\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b|\b(?:[0-9a-fA-F]{1,4}:){1,7}:|\b::(?:[0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}\b', '<IP_ADDRESS>'),  # IPv6 addresses
+    (r'https?://[a-zA-Z0-9.-]*google\.com[a-zA-Z0-9./?=&_-]*', '<INTERNAL_URL>'),  # Google URLs
     (r'cloudadvocacyorg\.joonix\.net', '<COMPANY_DOMAIN>'),  # Google/Internal domains
     (r'google\.com', '<COMPANY_DOMAIN>'),  # Google domains
-    (r'https?://[a-zA-Z0-9.-]*google\.com[a-zA-Z0-9./?=&_-]*', '<INTERNAL_URL>'),  # Google URLs
     (r'AI_SHA_KEY_[a-zA-Z0-9]{16,}', '<REDACTED_API_KEY>'),  # Key structures
     (r'AIzaSy[a-zA-Z0-9_-]{33}', '<REDACTED_API_KEY>'),  # Google Cloud API Keys
     (r'ghp_[a-zA-Z0-9]{36}', '<REDACTED_GITHUB_TOKEN>'),  # GitHub token
+    (r'github_pat_[a-zA-Z0-9_]{80,}', '<REDACTED_GITHUB_PAT>'),  # GitHub Fine-Grained PAT
+    (r'sk-ant-api03-[a-zA-Z0-9_-]{40,}', '<REDACTED_ANTHROPIC_KEY>'),  # Anthropic API Keys
+    (r'sk-[a-zA-Z0-9]{32,}', '<REDACTED_OPENAI_KEY>'),  # OpenAI API Keys
+    (r'AKIA[0-9A-Z]{16}', '<REDACTED_AWS_ACCESS_KEY>'),  # AWS Access Key ID
+    (r'glpat-[a-zA-Z0-9_-]{20,}', '<REDACTED_GITLAB_PAT>'),  # GitLab Personal Access Token
     (r'ey[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9._-]{10,}', '<REDACTED_JWT_TOKEN>'),  # JWTs
 ]
 
@@ -51,7 +72,7 @@ NAME_PATTERNS = [
     (r'\bksprashanth\b', '<USER_ID>'),
     (r'\bksprashu\b', '<USER_NICKNAME>'),
     (r'\bPrashanth\b', '<USER_NAME>'),
-    (r'/Users/ksprashanth', '/Users/<USER_ID>')
+    (r'/Users/' + re.escape(getpass.getuser()), '/Users/<USER_ID>')
 ]
 
 CRITIQUE_KEYWORDS = [
@@ -64,7 +85,7 @@ COMMONWEALTH_WORDS = [
     "modelling", "visualise", "customise"
 ]
 
-def sanitize_text(text):
+def sanitize_text(text, extra_names=None):
     """Scrubs sensitive information, PII, and specific personal ids/domains from raw text."""
     if not isinstance(text, str):
         return ""
@@ -76,10 +97,15 @@ def sanitize_text(text):
     # Run user name and home path scrubbers
     for pattern, replacement in NAME_PATTERNS:
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+
+    if extra_names:
+        for name, tag in extra_names:
+            if name:
+                text = re.sub(r'\b' + re.escape(name) + r'\b', tag, text, flags=re.IGNORECASE)
         
     return text
 
-def extract_antigravity_cli():
+def extract_antigravity_cli(extra_names=None):
     """Extracts from Antigravity CLI transcript.jsonl files."""
     prompts = []
     base_dir = PATHS["antigravity-cli"]
@@ -95,14 +121,14 @@ def extract_antigravity_cli():
                     data = json.loads(line)
                     # Extract from PLANNER_RESPONSE or user interactions
                     if data.get("type") == "USER_INPUT" and data.get("content"):
-                        prompts.append(sanitize_text(data["content"]))
+                        prompts.append(sanitize_text(data["content"], extra_names=extra_names))
                     elif data.get("source") == "USER_EXPLICIT" and data.get("content"):
-                        prompts.append(sanitize_text(data["content"]))
+                        prompts.append(sanitize_text(data["content"], extra_names=extra_names))
         except Exception:
             continue
     return prompts
 
-def extract_gemini_cli():
+def extract_gemini_cli(extra_names=None):
     """Extracts from gemini-cli session JSONL files."""
     prompts = []
     base_dir = PATHS["gemini-cli"]
@@ -117,16 +143,16 @@ def extract_gemini_cli():
                     data = json.loads(line)
                     # Support multiple formats in gemini-cli
                     if data.get("role") == "user" and data.get("content"):
-                        prompts.append(sanitize_text(data["content"]))
+                        prompts.append(sanitize_text(data["content"], extra_names=extra_names))
                     elif "user_input" in data:
-                        prompts.append(sanitize_text(data["user_input"]))
+                        prompts.append(sanitize_text(data["user_input"], extra_names=extra_names))
                     elif "content" in data and isinstance(data["content"], str) and data.get("sender") == "user":
-                        prompts.append(sanitize_text(data["content"]))
+                        prompts.append(sanitize_text(data["content"], extra_names=extra_names))
         except Exception:
             continue
     return prompts
 
-def extract_claude_code():
+def extract_claude_code(extra_names=None):
     """Extracts from Claude Code jsonl files."""
     prompts = []
     base_dir = PATHS["claude-code"]
@@ -144,14 +170,14 @@ def extract_claude_code():
                         content = data["content"]
                         if isinstance(content, list):
                             text = " ".join([part.get("text", "") for part in content if part.get("type") == "text"])
-                            prompts.append(sanitize_text(text))
+                            prompts.append(sanitize_text(text, extra_names=extra_names))
                         elif isinstance(content, str):
-                            prompts.append(sanitize_text(content))
+                            prompts.append(sanitize_text(content, extra_names=extra_names))
         except Exception:
             continue
     return prompts
 
-def extract_cline_and_roo_code():
+def extract_cline_and_roo_code(extra_names=None):
     """Extracts from Cline and Roo Code ui_messages.json files."""
     prompts = []
     for tool_name in ["cline", "roo-code"]:
@@ -168,14 +194,14 @@ def extract_cline_and_roo_code():
                         # Extracted user prompts
                         if msg.get("type") == "say" and msg.get("say") == "user_feedback":
                             if msg.get("text"):
-                                prompts.append(sanitize_text(msg["text"]))
+                                prompts.append(sanitize_text(msg["text"], extra_names=extra_names))
                         elif msg.get("role") == "user" and msg.get("content"):
-                            prompts.append(sanitize_text(msg["content"]))
+                            prompts.append(sanitize_text(msg["content"], extra_names=extra_names))
             except Exception:
                 continue
     return prompts
 
-def extract_aider():
+def extract_aider(extra_names=None):
     """Extracts from Aider session logs."""
     prompts = []
     # Check ~/.aider.history (plain command history file)
@@ -186,7 +212,7 @@ def extract_aider():
                 for line in f:
                     clean_line = line.strip()
                     if clean_line and not clean_line.startswith("#"):
-                        prompts.append(sanitize_text(clean_line))
+                        prompts.append(sanitize_text(clean_line, extra_names=extra_names))
         except Exception:
             pass
             
@@ -209,12 +235,12 @@ def extract_aider():
                     if line.startswith("> ") or line.startswith("  > "):
                         text = line.replace("> ", "").strip()
                         if text:
-                            prompts.append(sanitize_text(text))
+                            prompts.append(sanitize_text(text, extra_names=extra_names))
         except Exception:
             continue
     return prompts
 
-def extract_cursor():
+def extract_cursor(extra_names=None):
     """Extracts from Cursor global state.vscdb SQLite DB if accessible."""
     prompts = []
     base_dir = PATHS["cursor"]
@@ -224,7 +250,9 @@ def extract_cursor():
     db_file = os.path.join(base_dir, "globalStorage", "state.vscdb")
     if os.path.exists(db_file):
         try:
-            conn = sqlite3.connect(db_file)
+            # Use read-only URI mode to prevent database locking errors when Cursor is open
+            db_uri = f"file:{db_file}?mode=ro&immutable=1"
+            conn = sqlite3.connect(db_uri, uri=True)
             cursor = conn.cursor()
             # Try finding chat/composer keys in state table
             cursor.execute("SELECT key, value FROM globalState WHERE key LIKE '%chat%' OR key LIKE '%composer%'")
@@ -240,7 +268,7 @@ def extract_cursor():
                     for fp in found_prompts:
                         # Unescape unicode and sanitize
                         text = bytes(fp, "utf-8").decode("unicode_escape", errors="ignore")
-                        prompts.append(sanitize_text(text))
+                        prompts.append(sanitize_text(text, extra_names=extra_names))
                 except Exception:
                     continue
             conn.close()
@@ -397,44 +425,73 @@ You are an expert blogging and communication companion, modeling the real person
 """)
 
 def main():
+    parser = argparse.ArgumentParser(description="Extract human writing voice and tone from local AI coding tool logs.")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose diagnostic output")
+    parser.add_argument("-o", "--output-dir", type=str, default=None, help="Custom output directory path for generated files")
+    parser.add_argument("-t", "--tool", type=str, default="all", choices=["all", "antigravity-cli", "gemini-cli", "claude-code", "cline", "roo-code", "aider", "cursor"], help="Target a specific AI coding tool for extraction")
+    parser.add_argument("-u", "--user-name", type=str, default=None, help="Custom user name to scrub from prompts")
+    parser.add_argument("-n", "--user-nickname", type=str, default=None, help="Custom user nickname to scrub from prompts")
+    args = parser.parse_args()
+
     print("Initializing Voice Extraction across AI coding tools...")
+    if args.verbose:
+        print(f"Platform: {platform.system()} ({platform.release()})")
+        print(f"Home Directory: {HOME}")
+        print("Resolved tool storage paths:")
+        for tool, path in PATHS.items():
+            status = "EXISTS" if os.path.exists(path) else "NOT FOUND"
+            print(f"  - {tool}: {path} [{status}]")
+
+    extra_names = []
+    if args.user_name:
+        extra_names.append((args.user_name, "<USER_NAME>"))
+    if args.user_nickname:
+        extra_names.append((args.user_nickname, "<USER_NICKNAME>"))
+
     all_prompts = []
+    target_tool = args.tool.lower()
     
     # 1. Antigravity CLI
-    print("Checking Antigravity CLI files...")
-    ag_prompts = extract_antigravity_cli()
-    print(f"-> Extracted {len(ag_prompts)} prompts from Antigravity CLI.")
-    all_prompts.extend(ag_prompts)
+    if target_tool in ["all", "antigravity-cli"]:
+        print("Checking Antigravity CLI files...")
+        ag_prompts = extract_antigravity_cli(extra_names=extra_names)
+        print(f"-> Extracted {len(ag_prompts)} prompts from Antigravity CLI.")
+        all_prompts.extend(ag_prompts)
     
     # 2. Gemini CLI
-    print("Checking Gemini CLI files...")
-    gem_prompts = extract_gemini_cli()
-    print(f"-> Extracted {len(gem_prompts)} prompts from Gemini CLI.")
-    all_prompts.extend(gem_prompts)
+    if target_tool in ["all", "gemini-cli"]:
+        print("Checking Gemini CLI files...")
+        gem_prompts = extract_gemini_cli(extra_names=extra_names)
+        print(f"-> Extracted {len(gem_prompts)} prompts from Gemini CLI.")
+        all_prompts.extend(gem_prompts)
     
     # 3. Claude Code
-    print("Checking Claude Code files...")
-    claude_prompts = extract_claude_code()
-    print(f"-> Extracted {len(claude_prompts)} prompts from Claude Code.")
-    all_prompts.extend(claude_prompts)
+    if target_tool in ["all", "claude-code"]:
+        print("Checking Claude Code files...")
+        claude_prompts = extract_claude_code(extra_names=extra_names)
+        print(f"-> Extracted {len(claude_prompts)} prompts from Claude Code.")
+        all_prompts.extend(claude_prompts)
     
     # 4. Cline and Roo Code
-    print("Checking Cline & Roo Code files...")
-    cline_prompts = extract_cline_and_roo_code()
-    print(f"-> Extracted {len(cline_prompts)} prompts from Cline & Roo Code.")
-    all_prompts.extend(cline_prompts)
+    if target_tool in ["all", "cline", "roo-code"]:
+        print("Checking Cline & Roo Code files...")
+        cline_prompts = extract_cline_and_roo_code(extra_names=extra_names)
+        print(f"-> Extracted {len(cline_prompts)} prompts from Cline & Roo Code.")
+        all_prompts.extend(cline_prompts)
     
     # 5. Aider
-    print("Checking Aider files...")
-    aider_prompts = extract_aider()
-    print(f"-> Extracted {len(aider_prompts)} prompts from Aider.")
-    all_prompts.extend(aider_prompts)
+    if target_tool in ["all", "aider"]:
+        print("Checking Aider files...")
+        aider_prompts = extract_aider(extra_names=extra_names)
+        print(f"-> Extracted {len(aider_prompts)} prompts from Aider.")
+        all_prompts.extend(aider_prompts)
     
     # 6. Cursor
-    print("Checking Cursor SQLite databases...")
-    cursor_prompts = extract_cursor()
-    print(f"-> Extracted {len(cursor_prompts)} prompts from Cursor.")
-    all_prompts.extend(cursor_prompts)
+    if target_tool in ["all", "cursor"]:
+        print("Checking Cursor SQLite databases...")
+        cursor_prompts = extract_cursor(extra_names=extra_names)
+        print(f"-> Extracted {len(cursor_prompts)} prompts from Cursor.")
+        all_prompts.extend(cursor_prompts)
     
     # Remove duplicates
     unique_prompts = list(set(all_prompts))
@@ -448,7 +505,7 @@ def main():
     print(f"-> Detected {stats['critique_count']} critique-based trigger words.")
     
     # Write canonical outputs
-    output_dir = os.path.join(os.path.dirname(__file__), "..", "output")
+    output_dir = args.output_dir if args.output_dir else os.path.join(os.path.dirname(__file__), "..", "output")
     print(f"Writing canonical files to output directory: {output_dir}")
     write_canonical_files(unique_prompts, stats, output_dir)
     print("Extraction and packaging complete. Canonical files ready!")

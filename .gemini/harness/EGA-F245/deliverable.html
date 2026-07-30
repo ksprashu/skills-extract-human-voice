@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en" class="technical">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliverable</title>
+    <meta name="description" content="">
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        
+        /* TECHNICAL DOCUMENTATION THEME (LIGHT DEVPUB PORTAL - Stripe/Vercel Light Style) */
+        :root {
+            --bg-canvas: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-surface-alt: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --color-primary: #1e40af;
+            --color-secondary: #0369a1;
+            --color-accent: #2563eb;
+            --color-accent-glow: rgba(37, 99, 235, 0.08);
+            --border-color: #e2e8f0;
+            --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --rounding: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.1);
+            --header-bg: rgba(255, 255, 255, 0.92);
+        }
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px minmax(0, 1fr) 240px;
+            gap: 36px;
+            max-width: 1520px;
+            margin: 0 auto;
+            padding: 32px 32px;
+        }
+        @media(max-width: 1280px) {
+            .main-container { grid-template-columns: 260px minmax(0, 1fr); }
+            .toc-bar { display: none; }
+        }
+        @media(max-width: 900px) {
+            .main-container { grid-template-columns: 1fr; padding: 20px 16px; }
+            .sidebar { position: relative; top: 0; height: auto; border-right: none; padding-right: 0; margin-bottom: 24px; }
+        }
+        .sidebar {
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            padding-right: 24px;
+        }
+        .toc-bar {
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            border-left: 1px solid var(--border-color);
+            padding-left: 24px;
+        }
+        .prose-content {
+            max-width: 100%;
+            line-height: 1.75;
+            font-size: 16px;
+        }
+        .glass-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--rounding);
+            box-shadow: var(--shadow-md);
+            padding: 40px;
+            margin-bottom: 32px;
+        }
+    
+        
+        /* Premium Global Elements */
+        body {
+            transition: background-color 0.2s ease, color 0.2s ease;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+        }
+        
+        /* Modern Clean Header */
+        .premium-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* Dual View Tabs */
+        .tab-btn {
+            padding: 6px 18px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-surface-alt);
+        }
+        .tab-btn.tab-active {
+            background: var(--color-accent-glow);
+            color: var(--color-accent);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Typography System */
+        .prose-content h2 {
+            font-family: var(--font-heading);
+            font-size: 1.65rem;
+            font-weight: 800;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .prose-content h3 {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        .prose-content p {
+            margin-bottom: 1.25rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+        
+        /* External Links */
+        .external-link, .nav-link-item {
+            color: var(--color-accent);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+        .external-link:hover, .nav-link-item:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Word Wrapping Table Rule (Global Guideline) */
+        .rich-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.925rem;
+            border-radius: var(--rounding);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .rich-table th {
+            background-color: var(--bg-surface-alt);
+            color: var(--text-primary);
+            font-weight: 700;
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .rich-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .rich-table tr:hover {
+            background-color: var(--bg-surface-alt);
+        }
+        .rich-table th:first-child, .rich-table td:first-child {
+            white-space: nowrap !important;
+        }
+        .rich-table td:first-child code {
+            white-space: nowrap !important;
+            word-break: normal !important;
+        }
+        
+        /* Code container */
+        .code-container {
+            background-color: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: var(--rounding);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            color: #f8fafc;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background-color: #020617;
+            border-bottom: 1px solid #1e293b;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid #334155;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #cbd5e1;
+            font-size: 0.75rem;
+        }
+        .copy-btn:hover {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
+        pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .inline-code {
+            background-color: var(--bg-surface-alt);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.875em;
+            color: var(--color-accent);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* GFM alerts */
+        .admonition {
+            display: flex;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: var(--rounding);
+            border-left: 4px solid;
+            margin: 24px 0;
+            background-color: var(--bg-surface-alt);
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .admonition-note { border-left-color: #0284c7; }
+        .admonition-tip { border-left-color: #16a34a; }
+        .admonition-important { border-left-color: #9333ea; }
+        .admonition-warning { border-left-color: #d97706; }
+        .admonition-caution { border-left-color: #dc2626; }
+        
+        /* Sidebar layout links */
+        .sidebar-link {
+            display: block;
+            padding: 8px 12px;
+            border-radius: var(--rounding);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+        .sidebar-link:hover {
+            background-color: var(--bg-surface-alt);
+            color: var(--text-primary);
+        }
+        .sidebar-link.active {
+            background-color: var(--color-accent-glow);
+            color: var(--color-accent);
+            font-weight: 700;
+            border-left: 3px solid var(--color-accent);
+        }
+        
+        /* Lists */
+        .list-disc {
+            list-style-type: none;
+            margin-left: 0;
+            margin-bottom: 24px;
+        }
+        .list-disc li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .list-disc li::before {
+            content: "•";
+            color: var(--color-accent);
+            font-weight: bold;
+            font-size: 1.25rem;
+            position: absolute;
+            left: 6px;
+            top: -2px;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 0 !important;
+        }
+        .checklist-item::before {
+            display: none !important;
+        }
+        .checklist-item input[type="checkbox"] {
+            accent-color: var(--color-accent);
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 9999px;
+            border: 1px solid;
+            margin-right: 6px;
+        }
+        .badge-indigo { background-color: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #6366f1; }
+        .badge-teal { background-color: rgba(20, 184, 166, 0.1); border-color: rgba(20, 184, 166, 0.2); color: #14b8a6; }
+        .badge-green { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-red { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .badge-yellow { background-color: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    </style>
+</head>
+<body>
+
+    <!-- Premium Nav Bar with Dual-View Switcher -->
+    <header class="premium-header">
+        <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]"></span>
+            <span class="text-xs font-bold tracking-widest uppercase text-[var(--text-muted)]">Document Portal</span>
+        </div>
+        <div class="flex gap-2 bg-[var(--bg-surface-alt)] border border-[var(--border-color)] rounded-full p-1">
+            <button id="btn-ui-view" onclick="showView('ui')" class="tab-btn tab-active">🖥️ UI View</button>
+            <button id="btn-md-view" onclick="showView('md')" class="tab-btn">📄 Markdown Source</button>
+        </div>
+    </header>
+
+    <!-- Base Layout Container -->
+    <div class="main-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar flex flex-col space-y-4">
+            <div class="pb-4 border-b border-[var(--border-color)] mb-2">
+                <h1 class="text-base font-bold text-[var(--text-primary)] m-0">Deliverable</h1>
+                <p class="text-xs text-[var(--text-muted)] mt-1 m-0"></p>
+            </div>
+            <nav class="flex-1 space-y-1">
+                <a href="deliverable.html" class="sidebar-link active">Deliverable</a>
+            </nav>
+        </aside>
+
+        <!-- Dynamic View Contents -->
+        <main class="prose-content">
+            
+            <!-- Default UI Presentation View -->
+            <div id="ui-view" class="transition-all duration-200">
+                <!-- Page Content Prose -->
+                <article class="glass-panel">
+                    <h1 id="comprehensive-review-analysis---inline-code-0---skill" class="text-3xl font-black mb-6 pb-3 border-b border-[var(--border-color)]">Comprehensive Review & Analysis: <code class="inline-code">extract-human-voice</code> Skill</h1>
+<br/>
+<h2 id="executive-summary">Executive Summary</h2>
+<br/>
+<p>The <code class="inline-code">extract-human-voice</code> skill is an automated analysis and packaging pipeline designed to extract a user's authentic writing style, tone, and engineering constraints from historical conversation logs across major AI developer tools (including Google Antigravity CLI, Gemini CLI, Claude Code, Cline, Roo Code, Aider, and Cursor). By parsing historical prompts, scrubbing sensitive metadata and PII, and running linguistic heuristics, it packages a canonical writing persona (<code class="inline-code">voice_and_tone.md</code>, <code class="inline-code">golden_examples.md</code>, and <code class="inline-code">SKILL.md</code>) for downstream persona assistants such as <code class="inline-code">copy-writer-bara</code>.</p>
+<br/>
+<p>This deep review provides a multi-axis evaluation of the skill's architecture, prompt instructions, data pipeline, PII scrubbing engine, cross-platform compatibility, and unit test suite.</p>
+<br/>
+<p>---</p>
+<br/>
+<h2 id="architecture-file-structure-analysis">Architecture & File Structure Analysis</h2>
+<br/>
+<h3 id="repository-skill-organization">Repository & Skill Organization</h3>
+<br/>
+<p>The skill is organized into a modular, clean folder structure conforming to standard AI skill conventions:</p>
+<br/>
+
+            <div class="code-container my-6">
+                <div class="code-header">
+                    <span>TXT</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-txt">skills-extract-human-voice/
+├── skills/
+│   └── extract-human-voice/
+│       ├── SKILL.md              # Primary entrypoint &amp; workflow instructions
+│       ├── EXAMPLES.md           # Scrubbing &amp; critique translation examples
+│       ├── REFERENCE.md          # Storage paths, schemas &amp; heuristics reference
+│       ├── scripts/
+│       │   └── extract_voice.py  # Core extraction &amp; analysis engine (Python)
+│       └── output/               # Output directory for generated canonical files
+├── tests/
+│   └── test_extract_voice.py    # Unit tests for sanitization, heuristics &amp; paths
+├── README.md                     # Project overview and installation guide
+└── LICENSE                       # Apache 2.0 License
+</code></pre>
+            </div>
+            
+<br/>
+<h3 id="data-pipeline-architecture">Data Pipeline Architecture</h3>
+<br/>
+
+            <div class="code-container my-6">
+                <div class="code-header">
+                    <span>TXT</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-txt">                                  ┌───────────────────────────────┐
+                                  │   AI Tool Log Sources         │
+                                  │  - Antigravity CLI (JSONL)    │
+                                  │  - Gemini CLI (JSONL)         │
+                                  │  - Claude Code (JSONL)        │
+                                  │  - Cline / Roo Code (JSON)    │
+                                  │  - Aider (History / MD)       │
+                                  │  - Cursor (SQLite vscdb)      │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  1. Multi-Tool Extraction     │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  2. PII &amp; Secret Scrubbing    │
+                                  │     (Regex Sanitizer)         │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  3. Linguistic Analysis       │
+                                  │  - Commonwealth Spelling Check│
+                                  │  - Word Count &amp; Punctuation   │
+                                  │  - Critique Indicator Filter  │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  4. Canonical File Generator  │
+                                  │  - voice_and_tone.md          │
+                                  │  - golden_examples.md         │
+                                  │  - SKILL.md                   │
+                                  └───────────────────────────────┘
+</code></pre>
+            </div>
+            
+<br/>
+<p>---</p>
+<br/>
+<h2 id="code-instruction-quality-review">Code & Instruction Quality Review</h2>
+<br/>
+<h3 id="1---inline-code-6---skill-entrypoint">1. <code class="inline-code">SKILL.md</code> (Skill Entrypoint)</h3>
+<ul class="list-disc">
+<li><strong>Strengths</strong>: Frontmatter is concise and includes a descriptive <code class="inline-code">name</code> and <code class="inline-code">description</code>. Clear quick-start command pointing to <code class="inline-code">extract_voice.py</code>.</li>
+<li><strong>Observations</strong>:</li>
+<li>Highlights standard storage paths on macOS.</li>
+<li>Documents scrubbing categories (emails, domains, names, credentials).</li>
+<li>Outlines integration workflow with copybara-style skills (<code class="inline-code">copy-writer-bara</code>).</li>
+</ul>
+<br/>
+<h3 id="2---inline-code-11-----inline-code-12">2. <code class="inline-code">EXAMPLES.md</code> & <code class="inline-code">REFERENCE.md</code></h3>
+<ul class="list-disc">
+<li><strong><code class="inline-code">EXAMPLES.md</code></strong>: Provides clear before-and-after examples for PII redaction and demonstrates how raw, frustrated user critiques (e.g., <em>"The layout is pretty meh!"</em>) translate into positive persona traits (<em>"Aesthetics Gating & Information Density"</em>).</li>
+<li><strong><code class="inline-code">REFERENCE.md</code></strong>: Thoroughly details the database tables, JSON/JSONL schemas, and filesystem paths for all 7 supported AI coding assistants.</li>
+</ul>
+<br/>
+<h3 id="3---inline-code-15---engine-evaluation">3. <code class="inline-code">extract_voice.py</code> Engine Evaluation</h3>
+<ul class="list-disc">
+<li><strong>Cross-Platform Path Resolution (<code class="inline-code">get_tool_paths</code>)</strong>:</li>
+<li>Properly detects OS (<code class="inline-code">Darwin</code>, <code class="inline-code">Windows</code>, <code class="inline-code">Linux</code>) and adjusts base directories (<code class="inline-code">Library/Application Support</code> vs <code class="inline-code">APPDATA</code> vs <code class="inline-code">XDG_CONFIG_HOME</code>).</li>
+<li><strong>PII & Secret Sanitization (<code class="inline-code">sanitize_text</code>)</strong>:</li>
+<li>Uses comprehensive regex rules covering Emails, IP addresses, Google internal URLs/domains, API keys (Google Cloud, Anthropic, OpenAI, AWS, GitLab, GitHub PATs), and JWTs.</li>
+<li>Scrubbing includes user-specific name patterns and local <code class="inline-code">/Users/</code> paths.</li>
+<li><strong>Extractor Handlers</strong>:</li>
+<li><code class="inline-code">extract_antigravity_cli()</code>: Parses <code class="inline-code">transcript.jsonl</code> matching <code class="inline-code">USER_INPUT</code> or <code class="inline-code">USER_EXPLICIT</code>.</li>
+<li><code class="inline-code">extract_gemini_cli()</code>: Handles varied JSON keys (<code class="inline-code">role: user</code>, <code class="inline-code">user_input</code>, <code class="inline-code">sender: user</code>).</li>
+<li><code class="inline-code">extract_claude_code()</code>: Correctly parses content lists vs strings in Claude project logs.</li>
+<li><code class="inline-code">extract_cline_and_roo_code()</code>: Inspects <code class="inline-code">ui_messages.json</code> for <code class="inline-code">user_feedback</code> or <code class="inline-code">role: user</code>.</li>
+<li><code class="inline-code">extract_aider()</code>: Reads <code class="inline-code">.aider.history</code> lines and <code class="inline-code">.aider.chat.history.md</code> blockquotes.</li>
+<li><code class="inline-code">extract_cursor()</code>: Connects to SQLite <code class="inline-code">state.vscdb</code> using read-only URI mode (<code class="inline-code">mode=ro&amp;immutable=1</code>), avoiding locking conflicts with active Cursor editor processes.</li>
+</ul>
+<br/>
+<h3 id="4-test-suite-coverage---inline-code-44">4. Test Suite Coverage (<code class="inline-code">tests/test_extract_voice.py</code>)</h3>
+<ul class="list-disc">
+<li>Covers secret redactors, email/domain scrubbers, path resolution, and Commonwealth spelling heuristics. All 4 unit tests execute cleanly and pass in <5ms.</li>
+</ul>
+<br/>
+<p>---</p>
+<br/>
+<h2 id="strengths-architectural-highlights">Strengths & Architectural Highlights</h2>
+<br/>
+<p>1. <strong>Privacy-First Design</strong>: Completely local execution with multi-layered PII scrubbing ensures sensitive corporate URLs, internal credentials, and personal identities are stripped before outputs are stored or shared.</p>
+<p>2. <strong>Comprehensive AI Ecosystem Coverage</strong>: Parses transcript structures from 7 major AI developer tools across macOS, Linux, and Windows.</p>
+<p>3. <strong>Constructive Critique Transformation</strong>: Rather than discarding negative or frustrated user prompts, the engine extracts underlying quality expectations (e.g. demanding dense visual presentations, strict groundings, or atomic git hygiene).</p>
+<p>4. <strong>Resilient SQLite Access</strong>: Accesses Cursor's SQLite database via read-only URI connection strings, preventing locking issues when the Cursor editor is actively open.</p>
+<br/>
+<p>---</p>
+<br/>
+<h2 id="gaps-vulnerabilities-bottlenecks">Gaps, Vulnerabilities & Bottlenecks</h2>
+<br/>
+<p>1. <strong>Hardcoded User Name Scrubbing</strong>:</p>
+<ul class="list-disc">
+<li><code class="inline-code">NAME_PATTERNS</code> currently includes explicit user strings (<code class="inline-code">ksprashanth</code>, <code class="inline-code">Prashanth</code>, <code class="inline-code">ksprashu</code>). While <code class="inline-code">getpass.getuser()</code> handles the OS username, the hardcoded personal names should be dynamically configured or parameterized via arguments/environment variables.</li>
+</ul>
+<p>2. <strong>Lack of CLI Arguments for Filtering</strong>:</p>
+<ul class="list-disc">
+<li><code class="inline-code">extract_voice.py</code> currently accepts <code class="inline-code">-v/--verbose</code>, but lacks options to specify custom output directories, filter by date range, or run extraction for a single specific AI tool.</li>
+</ul>
+<p>3. <strong>Memory Considerations for Very Large Log Files</strong>:</p>
+<ul class="list-disc">
+<li>Reading logs line-by-line in <code class="inline-code">transcript.jsonl</code> is memory-efficient, but <code class="inline-code">extract_cursor()</code> loads entire JSON blobs from SQLite <code class="inline-code">globalState</code> into memory. For large global state databases (>100MB), regex evaluation on full JSON strings could increase RAM usage.</li>
+</ul>
+<p>4. <strong>IPv6 and Custom Domain Redaction Edge Cases</strong>:</p>
+<ul class="list-disc">
+<li>IP address regex currently targets IPv4 (<code class="inline-code">[0-9]{1,3}\.</code>). IPv6 addresses are not explicitly scrubbed.</li>
+</ul>
+<br/>
+<p>---</p>
+<br/>
+<h2 id="actionable-recommendations-improvement-roadmap">Actionable Recommendations & Improvement Roadmap</h2>
+<br/>
+<h3 id="short-term-improvements-quick-wins">Short-Term Improvements (Quick Wins)</h3>
+<ul class="list-disc">
+<li class="checklist-item"><input type="checkbox" disabled /> <span><strong>Dynamic Name Parameterization</strong>: Extend <code class="inline-code">sanitize_text</code> to accept an optional list of custom names or nicknames via environment variables or CLI flags (<code class="inline-code">--user-name</code>).</span></li>
+<li class="checklist-item"><input type="checkbox" disabled /> <span><strong>CLI Enhancements</strong>: Add <code class="inline-code">--output-dir</code> and <code class="inline-code">--tool</code> options to <code class="inline-code">extract_voice.py</code> to allow targeted extraction.</span></li>
+<li class="checklist-item"><input type="checkbox" disabled /> <span><strong>IPv6 Scrubbing Rule</strong>: Add regex pattern for IPv6 addresses in <code class="inline-code">PII_PATTERNS</code>.</span></li>
+</ul>
+<br/>
+<h3 id="medium-term-enhancements">Medium-Term Enhancements</h3>
+<ul class="list-disc">
+<li class="checklist-item"><input type="checkbox" disabled /> <span><strong>Date-Range Filtering</strong>: Support filtering prompts by time window (e.g., <code class="inline-code">--since 30d</code>) to capture recent shifts in writing style or technical focus.</span></li>
+<li class="checklist-item"><input type="checkbox" disabled /> <span><strong>Streamlined Cursor DB Parsing</strong>: Parse JSON trees in Cursor state incrementally rather than stringifying full JSON objects.</span></li>
+</ul>
+<br/>
+<h3 id="long-term-strategic-enhancements">Long-Term Strategic Enhancements</h3>
+<ul class="list-disc">
+<li class="checklist-item"><input type="checkbox" disabled /> <span><strong>Pluggable Extractor Architecture</strong>: Refactor <code class="inline-code">extract_voice.py</code> into a modular plugin system where new AI tool parsers can be registered dynamically.</span></li>
+</ul>
+<br/>
+<p>---</p>
+<br/>
+<h2 id="conclusion-quality-verdict">Conclusion & Quality Verdict</h2>
+<br/>
+<p>The <code class="inline-code">extract-human-voice</code> skill is a well-engineered, robust tool for AI persona extraction. It successfully balances privacy safeguards with rich linguistic analysis across multiple AI coding environments. Implementing the recommended short-term enhancements will further improve its adaptability for diverse multi-user environments.</p>
+<br/>
+                </article>
+            </div>
+
+            <!-- Alternative Raw Markdown Code View -->
+            <div id="markdown-view" class="hidden transition-all duration-200">
+                <div class="glass-panel">
+                    <div class="flex justify-between items-center pb-3 border-b border-[var(--border-color)] mb-4">
+                        <h2 class="text-lg font-bold text-[var(--text-primary)] m-0 p-0">Raw Markdown Source</h2>
+                        <button onclick="copyRawMarkdown(this)" class="copy-btn text-xs">Copy Source</button>
+                    </div>
+                    <pre class="bg-[#020617] border border-[#1e293b] rounded-xl p-5 overflow-x-auto"><code class="language-markdown text-[#f8fafc]"># Comprehensive Review &amp; Analysis: `extract-human-voice` Skill
+
+## Executive Summary
+
+The `extract-human-voice` skill is an automated analysis and packaging pipeline designed to extract a user&#x27;s authentic writing style, tone, and engineering constraints from historical conversation logs across major AI developer tools (including Google Antigravity CLI, Gemini CLI, Claude Code, Cline, Roo Code, Aider, and Cursor). By parsing historical prompts, scrubbing sensitive metadata and PII, and running linguistic heuristics, it packages a canonical writing persona (`voice_and_tone.md`, `golden_examples.md`, and `SKILL.md`) for downstream persona assistants such as `copy-writer-bara`.
+
+This deep review provides a multi-axis evaluation of the skill&#x27;s architecture, prompt instructions, data pipeline, PII scrubbing engine, cross-platform compatibility, and unit test suite.
+
+---
+
+## Architecture &amp; File Structure Analysis
+
+### Repository &amp; Skill Organization
+
+The skill is organized into a modular, clean folder structure conforming to standard AI skill conventions:
+
+```
+skills-extract-human-voice/
+├── skills/
+│   └── extract-human-voice/
+│       ├── SKILL.md              # Primary entrypoint &amp; workflow instructions
+│       ├── EXAMPLES.md           # Scrubbing &amp; critique translation examples
+│       ├── REFERENCE.md          # Storage paths, schemas &amp; heuristics reference
+│       ├── scripts/
+│       │   └── extract_voice.py  # Core extraction &amp; analysis engine (Python)
+│       └── output/               # Output directory for generated canonical files
+├── tests/
+│   └── test_extract_voice.py    # Unit tests for sanitization, heuristics &amp; paths
+├── README.md                     # Project overview and installation guide
+└── LICENSE                       # Apache 2.0 License
+```
+
+### Data Pipeline Architecture
+
+```
+                                  ┌───────────────────────────────┐
+                                  │   AI Tool Log Sources         │
+                                  │  - Antigravity CLI (JSONL)    │
+                                  │  - Gemini CLI (JSONL)         │
+                                  │  - Claude Code (JSONL)        │
+                                  │  - Cline / Roo Code (JSON)    │
+                                  │  - Aider (History / MD)       │
+                                  │  - Cursor (SQLite vscdb)      │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  1. Multi-Tool Extraction     │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  2. PII &amp; Secret Scrubbing    │
+                                  │     (Regex Sanitizer)         │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  3. Linguistic Analysis       │
+                                  │  - Commonwealth Spelling Check│
+                                  │  - Word Count &amp; Punctuation   │
+                                  │  - Critique Indicator Filter  │
+                                  └──────────────┬────────────────┘
+                                                 │
+                                                 ▼
+                                  ┌───────────────────────────────┐
+                                  │  4. Canonical File Generator  │
+                                  │  - voice_and_tone.md          │
+                                  │  - golden_examples.md         │
+                                  │  - SKILL.md                   │
+                                  └───────────────────────────────┘
+```
+
+---
+
+## Code &amp; Instruction Quality Review
+
+### 1. `SKILL.md` (Skill Entrypoint)
+* **Strengths**: Frontmatter is concise and includes a descriptive `name` and `description`. Clear quick-start command pointing to `extract_voice.py`.
+* **Observations**:
+  - Highlights standard storage paths on macOS.
+  - Documents scrubbing categories (emails, domains, names, credentials).
+  - Outlines integration workflow with copybara-style skills (`copy-writer-bara`).
+
+### 2. `EXAMPLES.md` &amp; `REFERENCE.md`
+* **`EXAMPLES.md`**: Provides clear before-and-after examples for PII redaction and demonstrates how raw, frustrated user critiques (e.g., *&quot;The layout is pretty meh!&quot;*) translate into positive persona traits (*&quot;Aesthetics Gating &amp; Information Density&quot;*).
+* **`REFERENCE.md`**: Thoroughly details the database tables, JSON/JSONL schemas, and filesystem paths for all 7 supported AI coding assistants.
+
+### 3. `extract_voice.py` Engine Evaluation
+* **Cross-Platform Path Resolution (`get_tool_paths`)**:
+  - Properly detects OS (`Darwin`, `Windows`, `Linux`) and adjusts base directories (`Library/Application Support` vs `APPDATA` vs `XDG_CONFIG_HOME`).
+* **PII &amp; Secret Sanitization (`sanitize_text`)**:
+  - Uses comprehensive regex rules covering Emails, IP addresses, Google internal URLs/domains, API keys (Google Cloud, Anthropic, OpenAI, AWS, GitLab, GitHub PATs), and JWTs.
+  - Scrubbing includes user-specific name patterns and local `/Users/` paths.
+* **Extractor Handlers**:
+  - `extract_antigravity_cli()`: Parses `transcript.jsonl` matching `USER_INPUT` or `USER_EXPLICIT`.
+  - `extract_gemini_cli()`: Handles varied JSON keys (`role: user`, `user_input`, `sender: user`).
+  - `extract_claude_code()`: Correctly parses content lists vs strings in Claude project logs.
+  - `extract_cline_and_roo_code()`: Inspects `ui_messages.json` for `user_feedback` or `role: user`.
+  - `extract_aider()`: Reads `.aider.history` lines and `.aider.chat.history.md` blockquotes.
+  - `extract_cursor()`: Connects to SQLite `state.vscdb` using read-only URI mode (`mode=ro&amp;immutable=1`), avoiding locking conflicts with active Cursor editor processes.
+
+### 4. Test Suite Coverage (`tests/test_extract_voice.py`)
+* Covers secret redactors, email/domain scrubbers, path resolution, and Commonwealth spelling heuristics. All 4 unit tests execute cleanly and pass in &lt;5ms.
+
+---
+
+## Strengths &amp; Architectural Highlights
+
+1. **Privacy-First Design**: Completely local execution with multi-layered PII scrubbing ensures sensitive corporate URLs, internal credentials, and personal identities are stripped before outputs are stored or shared.
+2. **Comprehensive AI Ecosystem Coverage**: Parses transcript structures from 7 major AI developer tools across macOS, Linux, and Windows.
+3. **Constructive Critique Transformation**: Rather than discarding negative or frustrated user prompts, the engine extracts underlying quality expectations (e.g. demanding dense visual presentations, strict groundings, or atomic git hygiene).
+4. **Resilient SQLite Access**: Accesses Cursor&#x27;s SQLite database via read-only URI connection strings, preventing locking issues when the Cursor editor is actively open.
+
+---
+
+## Gaps, Vulnerabilities &amp; Bottlenecks
+
+1. **Hardcoded User Name Scrubbing**:
+   - `NAME_PATTERNS` currently includes explicit user strings (`ksprashanth`, `Prashanth`, `ksprashu`). While `getpass.getuser()` handles the OS username, the hardcoded personal names should be dynamically configured or parameterized via arguments/environment variables.
+2. **Lack of CLI Arguments for Filtering**:
+   - `extract_voice.py` currently accepts `-v/--verbose`, but lacks options to specify custom output directories, filter by date range, or run extraction for a single specific AI tool.
+3. **Memory Considerations for Very Large Log Files**:
+   - Reading logs line-by-line in `transcript.jsonl` is memory-efficient, but `extract_cursor()` loads entire JSON blobs from SQLite `globalState` into memory. For large global state databases (&gt;100MB), regex evaluation on full JSON strings could increase RAM usage.
+4. **IPv6 and Custom Domain Redaction Edge Cases**:
+   - IP address regex currently targets IPv4 (`[0-9]{1,3}\.`). IPv6 addresses are not explicitly scrubbed.
+
+---
+
+## Actionable Recommendations &amp; Improvement Roadmap
+
+### Short-Term Improvements (Quick Wins)
+- [ ] **Dynamic Name Parameterization**: Extend `sanitize_text` to accept an optional list of custom names or nicknames via environment variables or CLI flags (`--user-name`).
+- [ ] **CLI Enhancements**: Add `--output-dir` and `--tool` options to `extract_voice.py` to allow targeted extraction.
+- [ ] **IPv6 Scrubbing Rule**: Add regex pattern for IPv6 addresses in `PII_PATTERNS`.
+
+### Medium-Term Enhancements
+- [ ] **Date-Range Filtering**: Support filtering prompts by time window (e.g., `--since 30d`) to capture recent shifts in writing style or technical focus.
+- [ ] **Streamlined Cursor DB Parsing**: Parse JSON trees in Cursor state incrementally rather than stringifying full JSON objects.
+
+### Long-Term Strategic Enhancements
+- [ ] **Pluggable Extractor Architecture**: Refactor `extract_voice.py` into a modular plugin system where new AI tool parsers can be registered dynamically.
+
+---
+
+## Conclusion &amp; Quality Verdict
+
+The `extract-human-voice` skill is a well-engineered, robust tool for AI persona extraction. It successfully balances privacy safeguards with rich linguistic analysis across multiple AI coding environments. Implementing the recommended short-term enhancements will further improve its adaptability for diverse multi-user environments.
+</code></pre>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Right Side TOC (only for 3-column layouts) -->
+        <aside class="toc-bar"><div class="sticky-toc"><span class="text-xs font-bold tracking-widest uppercase text-[var(--text-muted)]">On This Page</span><nav class="mt-4 space-y-1"><a href="#executive-summary" class="sidebar-link text-xs">Executive Summary</a>
+<a href="#architecture-file-structure-analysis" class="sidebar-link text-xs">Architecture & File Structure Analysis</a>
+<a href="#repository-skill-organization" class="sidebar-link text-xs ml-3">Repository & Skill Organization</a>
+<a href="#data-pipeline-architecture" class="sidebar-link text-xs ml-3">Data Pipeline Architecture</a>
+<a href="#code-instruction-quality-review" class="sidebar-link text-xs">Code & Instruction Quality Review</a>
+<a href="#1---inline-code-6---skill-entrypoint" class="sidebar-link text-xs ml-3">1. <!--INLINE_CODE_6--> (Skill Entrypoint)</a>
+<a href="#2---inline-code-11-----inline-code-12" class="sidebar-link text-xs ml-3">2. <!--INLINE_CODE_11--> & <!--INLINE_CODE_12--></a>
+<a href="#3---inline-code-15---engine-evaluation" class="sidebar-link text-xs ml-3">3. <!--INLINE_CODE_15--> Engine Evaluation</a>
+<a href="#4-test-suite-coverage---inline-code-44" class="sidebar-link text-xs ml-3">4. Test Suite Coverage (<!--INLINE_CODE_44-->)</a>
+<a href="#strengths-architectural-highlights" class="sidebar-link text-xs">Strengths & Architectural Highlights</a>
+<a href="#gaps-vulnerabilities-bottlenecks" class="sidebar-link text-xs">Gaps, Vulnerabilities & Bottlenecks</a>
+<a href="#actionable-recommendations-improvement-roadmap" class="sidebar-link text-xs">Actionable Recommendations & Improvement Roadmap</a>
+<a href="#short-term-improvements-quick-wins" class="sidebar-link text-xs ml-3">Short-Term Improvements (Quick Wins)</a>
+<a href="#medium-term-enhancements" class="sidebar-link text-xs ml-3">Medium-Term Enhancements</a>
+<a href="#long-term-strategic-enhancements" class="sidebar-link text-xs ml-3">Long-Term Strategic Enhancements</a>
+<a href="#conclusion-quality-verdict" class="sidebar-link text-xs">Conclusion & Quality Verdict</a></nav></div></aside>
+
+    </div>
+
+    <!-- Client-side Tab Switcher and Helpers -->
+    <script>
+        function showView(view) {
+            const ui = document.getElementById('ui-view');
+            const md = document.getElementById('markdown-view');
+            const btnUi = document.getElementById('btn-ui-view');
+            const btnMd = document.getElementById('btn-md-view');
+            
+            if (view === 'ui') {
+                ui.classList.remove('hidden');
+                md.classList.add('hidden');
+                btnUi.classList.add('tab-active');
+                btnMd.classList.remove('tab-active');
+            } else {
+                ui.classList.add('hidden');
+                md.classList.remove('hidden');
+                btnUi.classList.remove('tab-active');
+                btnMd.classList.add('tab-active');
+            }
+        }
+
+        function copyCode(btn) {
+            const pre = btn.closest('.code-container').querySelector('code');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                btn.innerText = "Copied!";
+                setTimeout(() => btn.innerText = "Copy", 1500);
+            });
+        }
+
+        function copyRawMarkdown(btn) {
+            const code = document.querySelector('#markdown-view code');
+            navigator.clipboard.writeText(code.innerText).then(() => {
+                btn.innerText = "Copied Source!";
+                setTimeout(() => btn.innerText = "Copy Source", 1500);
+            });
+        }
+    </script>
+    
+</body>
+</html>

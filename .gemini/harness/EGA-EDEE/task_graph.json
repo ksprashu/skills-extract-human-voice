@@ -1,0 +1,22 @@
+{
+  "short_id": "EGA-EDEE",
+  "goal_summary": "Implement recommendations for extract-human-voice skill",
+  "domain": "general",
+  "nodes": [
+    {
+      "id": "node_01",
+      "name": "Initial Implementation Pass",
+      "persona_role": "Builder-Coder",
+      "grounding_concepts": [],
+      "depends_on": [],
+      "spec_file": ".gemini/harness/EGA-EDEE/tasks/task_01_spec.md",
+      "judge_prompt": ".gemini/harness/EGA-EDEE/tasks/task_01_judge_prompt.md",
+      "target_artifact": ".gemini/harness/EGA-EDEE/deliverable.md",
+      "static_verifier": ".gemini/harness/EGA-EDEE/verify_static.py",
+      "dynamic_rubric": ".gemini/harness/EGA-EDEE/rubric.json",
+      "status": "COMPLETED",
+      "retry_count": 0,
+      "max_retries": 3
+    }
+  ]
+}

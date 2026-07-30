@@ -1,0 +1,20 @@
+{
+  "short_id": "EGA-4EA0",
+  "goal_summary": "Deep review and analysis of extract-human-voice skill",
+  "domain": "general",
+  "nodes": [
+    {
+      "id": "node_01",
+      "name": "Initial Implementation Pass",
+      "persona_role": "Analyst-Inquirer",
+      "grounding_concepts": [],
+      "spec_file": ".gemini/harness/EGA-4EA0/tasks/task_01_spec.md",
+      "target_artifact": ".gemini/harness/EGA-4EA0/deliverable.md",
+      "static_verifier": ".gemini/harness/EGA-4EA0/verify_static.py",
+      "dynamic_rubric": ".gemini/harness/EGA-4EA0/rubric.json",
+      "status": "COMPLETED",
+      "retry_count": 2,
+      "max_retries": 3
+    }
+  ]
+}

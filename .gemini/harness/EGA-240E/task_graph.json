@@ -1,0 +1,22 @@
+{
+  "short_id": "EGA-240E",
+  "goal_summary": "Implement recommended CLI flags, dynamic name sanitization, tool filtering, IPv6 scrubbing, and tests for extract-human-voice",
+  "domain": "general",
+  "nodes": [
+    {
+      "id": "node_01",
+      "name": "Initial Implementation Pass",
+      "persona_role": "Builder-Coder",
+      "grounding_concepts": [],
+      "depends_on": [],
+      "spec_file": ".gemini/harness/EGA-240E/tasks/task_01_spec.md",
+      "judge_prompt": ".gemini/harness/EGA-240E/tasks/task_01_judge_prompt.md",
+      "target_artifact": ".gemini/harness/EGA-240E/deliverable.md",
+      "static_verifier": ".gemini/harness/EGA-240E/verify_static.py",
+      "dynamic_rubric": ".gemini/harness/EGA-240E/rubric.json",
+      "status": "COMPLETED",
+      "retry_count": 0,
+      "max_retries": 3
+    }
+  ]
+}
